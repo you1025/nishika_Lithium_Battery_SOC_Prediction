@@ -1,0 +1,39 @@
+body {
+  font-family: Helvetica,Arial,sans-serif;
+  font-size: 10pt;
+}
+h1 {
+  font-size: 20pt;
+  margin-top: 30px;
+  border-bottom: 3px solid #ccc;
+}
+h1.title {
+  font-size: 30px;
+  border-bottom: none;
+  margin-bottom: 1em;
+/*  background: linear-gradient(transparent 80%, #a7d6ff 80%); */
+}
+h2 {
+  font-size: 13pt;
+  margin-top: 25px;
+  margin-bottom: 1em;
+  padding: 0.75em 0.5em;
+  background-color: #f6f6f6;
+  border-left: 6px solid #ccc;
+}
+h3 {
+  font-size: 12pt;
+  margin-bottom: 1em;
+  padding: 0.5em 0.5em;
+  border-left: 6px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+h4 {
+  font-size: 12pt;
+  padding: 0.5em 0.5em;
+  border-left: 6px solid #ccc;
+}
+.author, .date {
+  padding: 0 0.5em;
+  border: none;
+}
