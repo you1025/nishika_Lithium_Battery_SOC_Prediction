@@ -33,7 +33,8 @@ df.grid.params
 
 # Cross Validation --------------------------------------------------------
 
-#future::plan(future::multisession, workers = 2)
+# https://github.com/rstudio/rstudio/issues/6692
+future::plan(future::multisession, workers = 8, setup_strategy = "sequential")
 
 system.time(
 
@@ -52,7 +53,8 @@ system.time(
     purrr::map_dfr(function(model.applied) {
 
       # クロスバリデーションの分割ごとにループ
-      purrr::map_dfr(df.cv$splits, function(split, model) {
+#      purrr::map_dfr(df.cv$splits, function(split, model) {
+      furrr::future_map_dfr(df.cv$splits, function(split, model) {
 
         # 訓練/学習 データ
         df.cv.train <- rsample::training(split)
