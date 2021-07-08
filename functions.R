@@ -129,6 +129,9 @@ clean_data <- function(data, flg_test = F) {
       prev_Time = lag(Time),
       diff_Time = Time - prev_Time,
 
+      # Ah
+      Ah = cumsum(Current * ifelse(is.na(diff_Time), 0, diff_Time)) / 3600,
+
       # V
       prev_V = lag(Voltage),
       diff_V = Voltage - prev_V,
@@ -223,4 +226,19 @@ create_cv <- function(train_data) {
     rsample::manual_rset(
       ids = stringr::str_c("Sample", stringr::str_pad(1:15, 2, "left", "0"))
     )
+}
+
+calc_a <- function(data) {
+
+  model.lm <- data %>%
+
+    dplyr::group_by(experiment_type) %>%
+    dplyr::mutate(
+      Ah = cumsum(Current * ifelse(is.na(diff_Time), 0, diff_Time)) / 3600
+    ) %>%
+    dplyr::ungroup() %>%
+
+    lm(data = ., formula = SOC ~ Ah)
+  
+  100 / model.lm$coefficients[2]
 }
