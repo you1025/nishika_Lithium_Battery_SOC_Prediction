@@ -6,7 +6,6 @@ calc_pred_evals <- function(model, data) {
 
     dplyr::mutate(
       pred_diff_SOC = predict(model, data, type = "raw") %>%
-#        ifelse(Current == 0, 0, .) %>%
         tidyr::replace_na(replace = 0)
     ) %>%
 
