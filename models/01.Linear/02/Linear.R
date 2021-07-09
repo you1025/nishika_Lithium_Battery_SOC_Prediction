@@ -54,7 +54,6 @@ system.time(
     purrr::map_dfr(function(model.applied) {
 
       # クロスバリデーションの分割ごとにループ
-#      purrr::map_dfr(df.cv$splits, function(split, model) {
       furrr::future_map_dfr(df.cv$splits, function(split, model) {
 
         # 訓練/学習 データ
@@ -86,10 +85,6 @@ system.time(
     ) %>%
 
     dplyr::select(
-      # parameter
-      penalty,
-      mixture,
-
       # 評価
       train_rmse,
       test_rmse
@@ -100,65 +95,65 @@ df.results
 
 # Predict by Test Data ----------------------------------------------------
 
-# 提出用データの作成
-{
-  # テストデータのロード
-  df.test <- load_test_data("data/01.input/test.csv") %>%
-    clean_data(flg_test = T)
-
-  # 全訓練データで学習
-  fit <- parsnip::fit(
-    model,
-    diff_SOC ~
-      eff_Power +
-      eff_Power:eff_Temp_degC +
-      Current +
-      Current:Voltage +
-      zero_one_curr_gt_0:Battery_Temp_degC +
-      Chamber_Temp_degC +
-      ma10_dA,
-    df.train
-  )
-
-  df.test %>%
-
-    # SOC 差分予測の追加
-    dplyr::mutate(
-      pred_diff_SOC = predict(fit, df.test, type = "raw") %>%
-        tidyr::replace_na(replace = 0)
-    ) %>%
-
-    # SOC 差分の累積を算出
-    dplyr::group_by(experiment_type) %>%
-    dplyr::mutate(eff_SOC = cumsum(pred_diff_SOC)) %>%
-    dplyr::ungroup() %>%
-
-    # SOC (予測値)の算出
-    dplyr::mutate(
-      SOC = 100 + eff_SOC
-    ) %>%
-
-    dplyr::select(
-      ID,
-      SOC
-    )
-} %>%
-
-  # ファイルに出力
-  {
-    df.submit <- (.)
-
-    # ファイル名
-    filename <- stringr::str_c(
-      "Linear",
-      lubridate::now(tz = "Asia/Tokyo") %>% format("%Y%m%dT%H%M%S"),
-      sep = "_"
-    ) %>%
-      stringr::str_c("csv", sep = ".")
-
-    # 出力ファイルパス
-    filepath <- stringr::str_c("models/01.Linear/01/data/output/", filename, sep = "/")
-
-    # 書き出し
-    readr::write_csv(df.submit, filepath, col_names = T)
-  }
+# # 提出用データの作成
+# {
+#   # テストデータのロード
+#   df.test <- load_test_data("data/01.input/test.csv") %>%
+#     clean_data(flg_test = T)
+# 
+#   # 全訓練データで学習
+#   fit <- parsnip::fit(
+#     model,
+#     diff_SOC ~
+#       eff_Power +
+#       eff_Power:eff_Temp_degC +
+#       Current +
+#       Current:Voltage +
+#       zero_one_curr_gt_0:Battery_Temp_degC +
+#       Chamber_Temp_degC +
+#       ma10_dA,
+#     df.train
+#   )
+# 
+#   df.test %>%
+# 
+#     # SOC 差分予測の追加
+#     dplyr::mutate(
+#       pred_diff_SOC = predict(fit, df.test, type = "raw") %>%
+#         tidyr::replace_na(replace = 0)
+#     ) %>%
+# 
+#     # SOC 差分の累積を算出
+#     dplyr::group_by(experiment_type) %>%
+#     dplyr::mutate(eff_SOC = cumsum(pred_diff_SOC)) %>%
+#     dplyr::ungroup() %>%
+# 
+#     # SOC (予測値)の算出
+#     dplyr::mutate(
+#       SOC = 100 + eff_SOC
+#     ) %>%
+# 
+#     dplyr::select(
+#       ID,
+#       SOC
+#     )
+# } %>%
+# 
+#   # ファイルに出力
+#   {
+#     df.submit <- (.)
+# 
+#     # ファイル名
+#     filename <- stringr::str_c(
+#       "Linear",
+#       lubridate::now(tz = "Asia/Tokyo") %>% format("%Y%m%dT%H%M%S"),
+#       sep = "_"
+#     ) %>%
+#       stringr::str_c("csv", sep = ".")
+# 
+#     # 出力ファイルパス
+#     filepath <- stringr::str_c("models/01.Linear/01/data/output/", filename, sep = "/")
+# 
+#     # 書き出し
+#     readr::write_csv(df.submit, filepath, col_names = T)
+#   }
