@@ -10,7 +10,8 @@ load_train_data <- function(dirpath) {
     readr::read_csv(
       file = filepath,
       col_types = cols(
-        TimeStamp = col_datetime(format = "%m/%d/%Y %I:%M:%S %p"),
+#        TimeStamp = col_datetime(format = "%m/%d/%Y %I:%M:%S %p"),
+        TimeStamp = col_character(),
         Voltage = col_double(),
         Current = col_double(),
         Ah = col_double(),
